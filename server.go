@@ -9,13 +9,17 @@ import (
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 	group1 := r.Group("/api")
-	{
+	{	
+		// Login
+		group1.GET("/login", controllers.Login)
+
 		client := group1.Group("/users")
 		{
-			client.GET("/", controllers.Show)
+			client.PUT("/update/:id", controllers.Update)
+			client.DELETE("/delete/:id", controllers.Delete)
+			client.POST("/create", controllers.Create)
 		}
 	}
-
 	return r
 }
 

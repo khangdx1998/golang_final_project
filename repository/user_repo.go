@@ -1,8 +1,9 @@
-package main
+package repository
 
 import (
 	"final_project/db"
 	"final_project/models"
+	"github.com/google/uuid"
 )
 
 func CreateUser(user models.User) (string, error){
@@ -10,7 +11,8 @@ func CreateUser(user models.User) (string, error){
 	if err != nil {
 		return "Error", err
 	}
-
+	
+	user.Id = uuid.New().String()
 	e := db.Table("users").Create(&user).Error
 	if e != nil {
 		return "Error", e
@@ -18,42 +20,42 @@ func CreateUser(user models.User) (string, error){
 	return "Create successfully", nil
 }
 
-func UpdateUser(email string, user models.User) (string, error){
+func UpdateUser(condition models.Condition, user models.User) (string, error){
 	db, err := db.GetDB()
 	if err != nil {
 		return "Error", err
 	}
 
-	e := db.Table("users").Where("email = ?", email).Updates(user).Error
+	e := db.Table("users").Where(condition.Field + " = ?", condition.Value).Updates(user).Error
 	if e != nil {
 		return "Error", e
 	}
 	return "Update successfully", nil
 }
 
-func DeleteUser(email string) (string, error){
+func DeleteUser(condition models.Condition) (string, error){
 	db, err := db.GetDB()
 	if err != nil {
 		return "Error", err
 	}
 	
-	e := db.Where("email = ?", email).Delete(&models.User{}).Error
+	e := db.Where(condition.Field + " = ?", condition.Value).Delete(&models.User{}).Error
 	if e != nil {
 		return "Error", e
 	}
 	return "Delete successfully", nil
 }
 
-func ReadUser(email string) (interface{}, error){
+func ReadUser(condition models.Condition) (models.User, error){
 	db, err := db.GetDB()
 	if err != nil {
-		return "Error", err
+		return models.User{}, err
 	}
 	
 	var user models.User
-	e := db.Where("email = ?", email).First(&user).Error
+	e := db.Where(condition.Field + " = ?", condition.Value).First(&user).Error
 	if e != nil {
-		return "Error", e
+		return models.User{}, e
 	}
 	return user, nil
 }
