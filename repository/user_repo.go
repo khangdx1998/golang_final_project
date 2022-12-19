@@ -60,14 +60,14 @@ func ReadUser(condition models.Condition) (models.User, error){
 	return user, nil
 }
 
-func GetListRoles(email string) ([]models.Role, error){
+func GetListRoles(condition models.Condition) ([]models.Role, error){
 	db, err := db.GetDB()
 	if err != nil {
 		return nil, err
 	}
 
 	var user models.User
-	e := db.Joins("JOIN user_role ON users.id = user_role.user_id").Preload("Roles").Find(&user).Error
+	e := db.Joins("JOIN user_role ON users.id = user_role.user_id").Preload("Roles").Find(&user).Where(condition.Field + " = ?", condition.Value).Error
 	if e != nil {
 		return nil, e
 	}

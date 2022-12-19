@@ -8,6 +8,7 @@ import (
 	"strings"
 	"final_project/models"
 	"github.com/gin-gonic/gin"
+	"encoding/json"
 )
 
 func Login(c *gin.Context) {
@@ -98,4 +99,49 @@ func Create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Create user successfully"})
+}
+
+func Show(c *gin.Context) {
+	token := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
+	_, err := middleware.DecodeJWT(token)
+	if err != nil {
+		c.JSON(403, "Cannot decode token")
+		return
+	}
+
+	user, err := repo.ReadUser(models.Condition{Field: "id", Value: c.Param("id")})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+	}
+
+	json_bytes, err := json.Marshal(user)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		return
+	} 
+	
+	c.Data(http.StatusOK, "application/json", json_bytes)	 
+}
+
+func GetRoles(c *gin.Context) {
+	token := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
+	_, err := middleware.DecodeJWT(token)
+	if err != nil {
+		c.JSON(403, "Cannot decode token")
+		return
+	}
+
+	roles, err := repo.GetListRoles(models.Condition{Field: "id", Value: c.Param("id")})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+	}
+	j, err := json.MarshalIndent(roles, "", " ")
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		return
+	}
+	
+	c.Data(http.StatusOK, "application/json", j)
 }
