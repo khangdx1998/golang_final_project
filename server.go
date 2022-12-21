@@ -2,7 +2,6 @@ package main
 
 import (
 	"final_project/controllers"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,27 +11,27 @@ func setupRouter() *gin.Engine {
 	{	
 		// Login
 		group1.GET("/login", controllers.Login)
-
-		users := group1.Group("/users")
+		// User
+		users := group1.Group("/users").Use(controllers.JWTController)
 		{
-			users.PUT("/update/:id", controllers.Update)
-			users.DELETE("/delete/:id", controllers.Delete)
-			users.POST("/create", controllers.Create)
-			users.GET("/get/:id", controllers.Show)
-			users.GET("/get_roles/:id", controllers.GetRoles)
+			users.PUT("/update/:id", controllers.UpdateUserController)
+			users.DELETE("/delete/:id", controllers.DeleteUserController)
+			users.POST("/create", controllers.CreateUserController)
+			users.GET("/get/:id", controllers.ReadUserController)
+			users.GET("/get_roles/:id", controllers.GetRolesController)
 		}
-
-		role := group1.Group("/role")
+		// Role
+		role := group1.Group("/role").Use(controllers.JWTController)
 		{
-			role.GET("/get/:id", controllers.ShowRole)
-			role.POST("/create", controllers.CreateRole)
-			role.DELETE("/delete/:id", controllers.DeleteRole)
-			role.PUT("/update/:id", controllers.UpdateRole)
+			role.GET("/get/:id", controllers.ReadRoleController)
+			role.POST("/create", controllers.CreateRoleController)
+			role.DELETE("/delete/:id", controllers.DeleteRoleController)
+			role.PUT("/update/:id", controllers.UpdateRoleController)
 		}
-
-		user_role := group1.Group("/user_role")
+		//User Role
+		user_role := group1.Group("/user_role").Use(controllers.JWTController)
 		{
-			user_role.POST("/create", controllers.Create_UserRole)
+			user_role.POST("/create", controllers.CreateUserRoleController)
 		}
 	}
 	return r

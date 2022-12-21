@@ -17,7 +17,7 @@ var env config.Config = config.Get_config()
 func GenerateJWT(email string) (string, error) {
 	var jwtKey = []byte(env.Secret_key)
 	var iatTime = time.Now()
-	var expirationTime = time.Now().Add(10 * time.Minute)
+	var expirationTime = time.Now().Add(30 * time.Minute)
 	claims := &MyClaims{
 		Gmail: email,
 		RegisteredClaims: jwt.RegisteredClaims{

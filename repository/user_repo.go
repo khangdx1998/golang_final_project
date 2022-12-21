@@ -6,44 +6,44 @@ import (
 	"github.com/google/uuid"
 )
 
-func CreateUser(user models.User) (string, error){
+func CreateUser(user models.User) error{
 	db, err := db.GetDB()
 	if err != nil {
-		return "Error", err
+		return err
 	}
 	
 	user.Id = uuid.New().String()
 	e := db.Table("users").Create(&user).Error
 	if e != nil {
-		return "Error", e
+		return e
 	}
-	return "Create successfully", nil
+	return nil
 }
 
-func UpdateUser(condition models.Condition, user models.User) (string, error){
+func UpdateUser(condition models.Condition, user models.User) error{
 	db, err := db.GetDB()
 	if err != nil {
-		return "Error", err
+		return err
 	}
 
 	e := db.Table("users").Where(condition.Field + " = ?", condition.Value).Updates(user).Error
 	if e != nil {
-		return "Error", e
+		return e
 	}
-	return "Update successfully", nil
+	return nil
 }
 
-func DeleteUser(condition models.Condition) (string, error){
+func DeleteUser(condition models.Condition) error{
 	db, err := db.GetDB()
 	if err != nil {
-		return "Error", err
+		return err
 	}
 	
 	e := db.Where(condition.Field + " = ?", condition.Value).Delete(&models.User{}).Error
 	if e != nil {
-		return "Error", e
+		return e
 	}
-	return "Delete successfully", nil
+	return nil
 }
 
 func ReadUser(condition models.Condition) (models.User, error){

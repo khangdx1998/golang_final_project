@@ -5,7 +5,6 @@ import (
 	repo "final_project/repository"
 	"fmt"
 	"net/http"
-	"strings"
 	"final_project/models"
 	"github.com/gin-gonic/gin"
 	"encoding/json"
@@ -38,21 +37,14 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": jwt_token})
 }
 
-func Update(c *gin.Context) {
+func UpdateUserController(c *gin.Context) {
 	id :=  c.Param("id")
-	token := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
-	_, err := middleware.DecodeJWT(token)
-	if err != nil {
-		c.JSON(403, "Cannot decode token")
-		return
-	}
-
 	info := models.User{}
 	if err := c.BindJSON(&info); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	_, e := repo.UpdateUser(models.Condition{Field: "id", Value: id}, info)
+	e := repo.UpdateUser(models.Condition{Field: "id", Value: id}, info)
 	if e != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": e})
 		return
@@ -61,16 +53,9 @@ func Update(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Update successfully id = " + id})
 }
 
-func Delete(c *gin.Context) {
+func DeleteUserController(c *gin.Context) {
 	id :=  c.Param("id")
-	token := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
-	_, err := middleware.DecodeJWT(token)
-	if err != nil {
-		c.JSON(403, "Cannot decode token")
-		return
-	}
-
-	_, e := repo.DeleteUser(models.Condition{Field: "id", Value: id})
+	e := repo.DeleteUser(models.Condition{Field: "id", Value: id})
 	if e != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": e})
 		return
@@ -78,21 +63,14 @@ func Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Delete successfully id = " + id})
 }
 
-func Create(c *gin.Context) {
-	token := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
-	_, err := middleware.DecodeJWT(token)
-	if err != nil {
-		c.JSON(403, "Cannot decode token")
-		return
-	}
-
+func CreateUserController(c *gin.Context) {
 	info := models.User{}
 	if err := c.BindJSON(&info); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	_, e := repo.CreateUser(info)
+	e := repo.CreateUser(info)
 	if e != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": e})
 		return
@@ -101,14 +79,7 @@ func Create(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Create user successfully"})
 }
 
-func Show(c *gin.Context) {
-	token := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
-	_, err := middleware.DecodeJWT(token)
-	if err != nil {
-		c.JSON(403, "Cannot decode token")
-		return
-	}
-
+func ReadUserController(c *gin.Context) {
 	user, err := repo.ReadUser(models.Condition{Field: "id", Value: c.Param("id")})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err})
@@ -124,14 +95,7 @@ func Show(c *gin.Context) {
 	c.Data(http.StatusOK, "application/json", json_bytes)	 
 }
 
-func GetRoles(c *gin.Context) {
-	token := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
-	_, err := middleware.DecodeJWT(token)
-	if err != nil {
-		c.JSON(403, "Cannot decode token")
-		return
-	}
-
+func GetRolesController(c *gin.Context) {
 	roles, err := repo.GetListRoles(models.Condition{Field: "id", Value: c.Param("id")})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err})

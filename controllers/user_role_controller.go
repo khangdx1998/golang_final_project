@@ -3,19 +3,10 @@ package controllers
 import (
 	"final_project/models"
 	"github.com/gin-gonic/gin"
-	"strings"
-	"final_project/middleware"
 	"net/http"
 	repo "final_project/repository"
 )
-func Create_UserRole(c *gin.Context) {
-	token := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
-	_, err := middleware.DecodeJWT(token)
-	if err != nil {
-		c.JSON(403, "Cannot decode token")
-		return
-	}
-
+func CreateUserRoleController(c *gin.Context) {
 	user_role := models.UserRole{}
 
 	if err := c.BindJSON(&user_role); err != nil {
