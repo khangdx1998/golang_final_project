@@ -1,0 +1,29 @@
+version: '3.6'
+
+services:
+  api:
+    image: golang_project:v1.0
+    container_name: golang_final_project
+    ports: 
+    - 5000:5000
+    env_file:
+      - .env
+    depends_on:
+      - postgresql
+  
+  postgresql:
+    image: postgres
+    container_name: postgres_service
+    ports:
+    - 5432:5432
+    environment:
+      - POSTGRES_USER=khangdx
+      - POSTGRES_PASSWORD=abcd1234
+      - POSTGRES_DB=final_project
+    volumes:
+      - docker_postgres:/var/lib/postgresql/data
+
+volumes:
+  docker_postgres:
+    external: true
+
