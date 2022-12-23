@@ -18,5 +18,4 @@ COPY --from=build /app/.env .
 
 EXPOSE 5000
 
-# Run the binary program produced by `go install`
 CMD ["./api"]

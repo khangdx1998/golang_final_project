@@ -74,3 +74,8 @@ func get_random_permission() string {
 
 	return action_string
 }
+
+func main() {
+	import_user_data()
+	import_role_data()
+}
